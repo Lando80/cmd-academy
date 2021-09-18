@@ -1,0 +1,33 @@
+{
+  "name": "cmd-academy",
+  "version": "1.0.0",
+  "description": "Este projeto foi desenvolvido durante o Projeto de Extensão Fábrica de Software, uma parceria entre Uninorte e CMD Consultoria",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon src/server.js",
+    "knex:migrate": "knex --knexfile knexfile.js migrate:latest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Lando80/cmd-academy.git"
+  },
+  "author": "Rickson Lima",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Lando80/cmd-academy/issues"
+  },
+  "homepage": "https://github.com/Lando80/cmd-academy#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.11",
+    "pg": "^8.7.1"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12",
+    "sucrase": "^3.20.1"
+  }
+}
