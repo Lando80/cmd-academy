@@ -1,35 +1,52 @@
-import bcrypt from 'bcrypt'
+import bcrypt from 'bcrypt-nodejs'
 import knex from '../../database/connection'
+import { existsOrError, notExistsOrError, equalsOrError } from '../utils/validations.js'
+
+const encryptPassword = password => {
+  const salt = bcrypt.genSaltSync(10)
+  return bcrypt.hashSync(password, salt)
+}
 
 class UserController {
-  async create(req, res) {
-    try {
-      const { name, email, password } = req.body
+ 
+  async save(req, res) {
+    
+      const user = {...req.body}
+      if(req.params.id) user.id = req.params.id
 
-      const searchEmail = await knex
+      try {
+        existsOrError(user.name, 'Nome não informado')
+        existsOrError(user.email, 'E-mail não informado')
+        existsOrError(user.password, 'Senha não informada')
+        existsOrError(user.confirmPassword, 'Confirmação de Senha Inválida')
+        equalsOrError(user.password, user.confirmPassword, 'Senhas não conferem')
+
+      const userFromDB = await knex
         .select('*')
         .from('users')
-        .where('email', email)
+        .where({ email: user.email }).first()
 
-      if (searchEmail.length === 1) {
-        return res
-          .status(409)
-          .send({ mensagem: 'O e-mail informado já está cadastro' })
+        if (!user.id){
+          notExistsOrError(userFromDB, 'Usuário já cadastrado')
+        }
+      } catch(msg) {
+        return res.status(400).send(msg)
       }
 
-      await knex('users').insert({
-        name,
-        email,
-        password,
-      })
+      user.password = encryptPassword(req.password)
+      delete user.confirmPassword
 
-      return res
-        .status(201)
-        .send({ mensagem: 'Usuário cadastrado com sucesso' })
-    } catch (error) {
-      return res.status(400).send(error)
+      if(user.id) {
+        knex('users').update(user)
+        .where({ id: user.id })
+        .then(_ => res.status(204).send())
+        .catch(err => res.status(500).send(err))
+      } else {
+        knex('users').insert(user)
+        .then(_ => res.status(204).send())
+        .catch(err => res.status(500).send(err))
+      }
     }
   }
-}
 
 export default new UserController()
