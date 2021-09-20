@@ -1,4 +1,4 @@
-import bcrypt from 'bcrypt-nodejs'
+import bcrypt from 'bcrypt'
 import knex from '../../database/connection'
 import { existsOrError, notExistsOrError, equalsOrError } from '../utils/validations.js'
 
