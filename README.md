@@ -52,6 +52,6 @@ Agenda | Lucas / Alexandre / Marcionílio | Rodrigo / João Ricardo
 
     Após a instalação das dependências você deverá rodar o comando → npm run knex:migrate
     
-    E por último rodar o comando → npm run server
+    E por último rodar o comando → npm run dev
     Para startar o projeto
 </p>
