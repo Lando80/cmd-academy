@@ -23,7 +23,7 @@
 
 ## Configuração do projeto 📜
 
-### Após instalar as ferramentas necessárias, siga o passo a passo abaixo
+### Após instalar as ferramentas necessárias siga o passo a passo abaixo
 
 ---
 
