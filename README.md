@@ -1,57 +1,100 @@
-# cmd-academy
-## Projeto da Fabrica de Software - construção do website de Network da CMD ACADEMY
-##
+# CMD Academy
 
-Equipes:
+## Equipes:
 
+| MÓDULO                 | FRONT-END                       | BACK-END                    |
+| ---------------------- | ------------------------------- | --------------------------- |
+| Login/Cadastro         | Marcionílio / Lucas             | Daniel / Rodrigo / David    |
+| Home                   | Alexandre / Jailma              | Aytalon / Matheus / Rickson |
+| Notificações           | Acácio / Antonio                | Orlando / Ronildo           |
+| Certificados           | David / Marcos                  | Orlando / Ronildo           |
+| Perfil Instrutor/Aluno | Edicléia / Ailton               | Edicléia / Daniel           |
+| Agenda                 | Lucas / Alexandre / Marcionílio | Rodrigo / João Ricardo      |
 
-MÓDULO | FRONT-END | BACK-END
-------------------------|-----------|---------
-Login/Cadastro | Marcionílio / Lucas | Daniel / Rodrigo / David
-Home | Alexandre / Jailma | Aytalon / Matheus / Rickson  
-Notificações | Acácio / Antonio | Orlando / Ronildo 
-Certificados | David / Marcos | Orlando / Ronildo 
-Perfil Instrutor/Aluno | Edicléia / Ailton | Edicléia / Daniel
-Agenda | Lucas / Alexandre / Marcionílio | Rodrigo / João Ricardo
+---
 
-<h1>Passo-a-Passo para configurar o projeto</h1>
+## Ferramentas necessárias 🔧
 
-<p align="center">
-    1 - Clonar o repositório na sua Máquina.
+- [Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org/en/) - v14.17.6
+- [PostgreSQL](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads) - v13.14
 
-    2 - Criar o banco de dados:
-    
-    No terminal digite: psql -U postgres
-    Clique em enter, em seguida digite a senha que você utilizou durante a instalação do postgres;
+---
 
-    Em seguida digite: CREATE DATABASE cmd; → Aperte em enter;
+## Configuração do projeto 📜
 
-    Para listar os bancos criados utilize o: \l;
+### Após instalar as ferramentas necessárias, siga o passo a passo abaixo
 
-    Para se conectar com algum banco criado: \c + o nome do banco. ex: "\c cmd"; 
+---
 
-    Após se conectar com o banco você poderá listar as tabelas por meio do: \dt;
+### 1. Rode o seguinte comando no Git Bash
 
-    3-  Altere o arquivo .env.exemple para → .env
+    git clone https://github.com/Lando80/cmd-academy.git
 
-    4 -  Configure seu env adicionando os seguintes itens:
+ou
+
+    Baixe o arquivo .zip do projeto aqui pelo GitHub
+
+Lembre-se de verificar em qual branch você está fazendo isso
+
+---
+
+### 2. Crie seu banco de dados local
+
+Rode o seguinte comando pelo terminal
+
+    psql -U postgres
+
+Em seguida, digite a senha que você utilizou durante a instalação do PostgreSQL
+
+Agora rode o comando
+
+    CREATE DATABASE cmd;
+
+Para listar os bancos criados utilize
+
+    \l
+
+Para se conectar com o banco criado
+
+    \c cmd
+
+Após se conectar com o banco você poderá listar as tabelas existentes por meio do
+
+    \dt
+
+---
+
+### 3. Copie e cole o arquivo _.env.exemple_ e altere o nome da cópia para _.env_
+
+---
+
+### 4. Configure seu arquivo _.env_ adicionando os seguintes itens
 
     HOST_DB = localhost
 
     PORT_DB = 5432
 
-    USER_DB =  postgres
+    USER_DB = postgres
 
     PASSWORD_DB = AQUI VOCÊ COLOCARÁ A MESMA SENHA QUE UTILIZOU DURANTE A INSTALAÇÃO DO POSTGRES
 
     DATABASE_NAME = cmd
 
-    5- Dentro da pasta do projeto no terminal:
+### 5. Abra a pasta do projeto pelo seu editor de código ou pelo terminal
 
-    Você deverá rodar o comando → npm i; → para instalar todas as dependências
+Caso esteja utilizando o Visual Studio Code, aperte
 
-    Após a instalação das dependências você deverá rodar o comando → npm run knex:migrate
-    
-    E por último rodar o comando → npm run dev
-    Para startar o projeto
-</p>
+    Ctrl + J
+
+Instale as dependências do projeto com
+
+    npm i
+
+Após a instalação das dependências você deverá rodar o comando
+
+    npm run knex:migrate
+
+E por último rodar o comando
+
+    npm run dev
