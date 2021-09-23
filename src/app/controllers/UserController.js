@@ -10,8 +10,9 @@ const encryptPassword = password => {
 class UserController {
  
   async save(req, res) {
-    
-      const user = {...req.body}
+
+      const user = {...req.body} 
+      
       if(req.params.id) user.id = req.params.id
 
       try {
@@ -23,7 +24,7 @@ class UserController {
 
       const userFromDB = await knex
         .select('*')
-        .from('users')
+        .from('users') 
         .where({ email: user.email }).first()
 
         if (!user.id){
@@ -33,7 +34,7 @@ class UserController {
         return res.status(400).send(msg)
       }
 
-      user.password = encryptPassword(req.password)
+      user.password = encryptPassword(user.password) 
       delete user.confirmPassword
 
       if(user.id) {
@@ -46,7 +47,10 @@ class UserController {
         .then(_ => res.status(204).send())
         .catch(err => res.status(500).send(err))
       }
-    }
   }
+
+
+
+}
 
 export default new UserController()
