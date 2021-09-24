@@ -27,6 +27,7 @@
     "pg": "^8.7.1"
   },
   "devDependencies": {
+    "morgan": "^1.10.0",
     "nodemon": "^2.0.12",
     "sucrase": "^3.20.1"
   }
