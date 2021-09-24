@@ -9,7 +9,7 @@ module.exports = {
       table.string('tags')
       table.string('url_image')
 
-      table.timestamp(true, true)
+      table.timestamps(true, true)
 
       table.integer('author_id').references('id').inTable('users')
     })
