@@ -5,8 +5,11 @@ import AuthMiddleware from './app/middlewares/authentication'
 
 const routes = express.Router()
 
-routes.post('/users', UserController.save)
-routes.post('/auth', SessionController.signin)
-routes.put('/users/:id', AuthMiddleware, UserController.save)
+routes.post('/signup', UserController.save)
+routes.post('/signin', SessionController.signin)
+
+routes.use(AuthMiddleware)
+
+routes.put('/users', UserController.update)
 
 export default routes
