@@ -1,17 +1,16 @@
 import knex from '../../database/connection'
-import { existsOrError } from '../utils/validations.js'
 
 class PostController {
-  // TODO: FUNCAO DE UPAR A IMAGEM NO FIREBASE E PEGAR A URL
-  async save(req, res) {
+  async save(req, res, next) {
     try {
       const { firebaseUrl } = req.file ? req.file : ''
-
       const { title, content, tags } = req.body
       const author_id = req.userId
 
-      existsOrError(title, 'Título do post não informado!')
-      existsOrError(content, 'Conteúdo do post não informado!')
+      if (!title || !content)
+        return res
+          .status(400)
+          .json({ error: 'Title and content are required.' })
 
       const post = {
         title,
@@ -23,77 +22,72 @@ class PostController {
 
       await knex('posts').insert(post)
 
-      return res.status(201).send(post)
-    } catch (msg) {
-      return res.status(400).send(msg)
+      return res.status(201).json(post)
+    } catch (error) {
+      next(error)
     }
   }
 
-  async index(req, res) {
-    const { search } = req.query
-
+  // TODO: ADICIONAR LIMITES DE POSTS RETORNADOS
+  async index(req, res, next) {
     try {
-      const posts = search
-        ? await knex('posts').select('*').where('tags', 'like', `%${search}%`)
-        : await knex('posts').select('*')
+      const posts = await knex('posts').select('*')
 
       if (posts.length === 0)
         return res.status(404).json({ error: 'No search results.' })
 
       return res.status(200).json(posts)
     } catch (error) {
-      return res.status(500).send(error)
+      next(error)
     }
   } // return all posts if a search string is not provided
 
-  async indexAll(req, res) {
-    //   TODO: VERIFY IF AN USER HAVE THE USER_ID, IF NOT, RESPONSE IT
-    const { user_id } = req.params
-
+  async indexAll(req, res, next) {
     try {
+      const { user_id } = req.params
+
+      if (!(await knex('users').where({ id: user_id }).first()))
+        return res.status(400).json({ error: 'User not exists.' })
+
       const posts = await knex('posts')
         .select('*')
         .where({ author_id: user_id })
 
-      if (posts.length === 0) {
+      if (posts.length === 0)
         return res.status(404).json({ error: 'This user has no posts yet.' })
-      }
 
       return res.status(200).json(posts)
     } catch (error) {
-      return res.status(400).send(error)
+      next(error)
     }
   } // return all posts of an user
 
-  async show(req, res) {
+  async show(req, res, next) {
     try {
       const post_id = req.params.post_id
 
-      const post = await knex('posts')
-        .select('*')
-        .where({ id: post_id })
-        .first()
+      const post = await knex('posts').where({ id: post_id }).first()
 
-      if (post.length === 0) throw 'Post not found.'
+      if (!post) return res.send({ error: 'Post not found.' })
 
-      return res.status(200).json(post)
+      return res.json(post)
     } catch (error) {
-      return res.status(404).json({ error: 'Post not found.' })
+      next(error)
     }
   } // return a single post
 
-  async update(req, res) {
+  async update(req, res, next) {
     try {
       const { title, content, tags } = req.body
+
       const post_id = req.params.post_id
       const user_id = req.userId
 
       const post = await knex('posts')
-        .select('*')
         .where({ id: post_id, author_id: user_id })
         .first()
 
-      if (!post) throw 'O usuário não é o autor do post.'
+      if (!post) return res.status(404).json({ error: 'Post not found.' })
 
       post.title = title || post.title
       post.content = content || post.content
@@ -101,13 +95,13 @@ class PostController {
 
       await knex('posts').update(post).where({ id: post.id })
 
-      return res.status(200).json(post)
+      return res.status(204).send()
     } catch (error) {
-      return res.status(404).json({ error: 'Post not found.' })
+      next(error)
     }
   }
 
-  async delete(req, res) {
+  async delete(req, res, next) {
     try {
       const post_id = req.params.post_id
       const user_id = req.userId
@@ -116,13 +110,12 @@ class PostController {
         .where({ id: post_id, author_id: user_id })
         .del()
 
-      if (result === 0) throw 'O usuário não é o autor do post.'
+      if (result === 0)
+        return res.status(404).json({ error: 'Post not found.' })
 
-      return res
-        .status(200)
-        .json({ message: 'The post was successfully deleted.' })
+      return res.status(204).send()
     } catch (error) {
-      return res.status(404).json({ error: 'Post not found.' })
+      next(error)
     }
   }
 }

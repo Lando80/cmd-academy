@@ -18,7 +18,7 @@ routes.post('/auth', SessionController.signin)
 routes.use(AuthMiddleware)
 
 routes.put(
-  '/users/:id',
+  '/users/:user_id',
   multer(multerConfig).single('avatar'),
   uploadImage,
   UserController.update

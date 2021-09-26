@@ -12,67 +12,64 @@ const hashedPassword = (password) => {
 }
 
 class UserController {
-  async save(req, res) {
-    const user = { ...req.body }
-
+  //TODO: FIX SAVE FUNCTION AND ADD SEARCH POSTS ROUTE && FUNCTION
+  async save(req, res, next) {
     try {
+      const user = { ...req.body }
+
       existsOrError(user.name, 'Nome não informado')
       existsOrError(user.email, 'E-mail não informado')
       existsOrError(user.password, 'Senha não informada')
       existsOrError(user.confirmPassword, 'Confirmação de Senha Inválida')
       equalsOrError(user.password, user.confirmPassword, 'Senhas não conferem')
 
-      const userFromDB = await knex
-        .select('*')
-        .from('users')
+      const userFromDB = await knex('users')
         .where({ email: user.email })
         .first()
 
       if (!user.id) {
-        notExistsOrError(userFromDB, 'Usuário já cadastrado')
+        notExistsOrError(userFromDB, 'Usuário já cadastrado.')
       }
-    } catch (msg) {
-      return res.status(400).send(msg)
+
+      user.password = hashedPassword(user.password)
+      delete user.confirmPassword
+
+      delete user.password
+
+      return res
+        .status(201)
+        .json({ message: 'Usuário cadastrado com sucesso.' })
+    } catch (error) {
+      next(error)
     }
-
-    user.password = hashedPassword(user.password)
-    delete user.confirmPassword
-
-    knex('users')
-      .insert(user)
-      .then((_) => res.status(204).send())
-      .catch((err) => res.status(500).send(err))
   }
 
-  async update(req, res) {
-    const { name, email, profession, bio } = req.body
+  async update(req, res, next) {
+    try {
+      const { name, profession, bio } = req.body
 
-    const { firebaseUrl } = req.file ? req.file : ''
+      const { firebaseUrl } = req.file ? req.file : ''
 
-    existsOrError(name, 'Nome não informado')
-    existsOrError(email, 'E-mail não informado')
+      const user = await knex('users').where({ id: req.params.user_id }).first()
 
-    const user = await knex
-      .select('*')
-      .from('users')
-      .where({ id: req.userId })
-      .first()
+      if (!user) return res.status(404).json({ error: 'User not found.' })
 
-    if (user.id) {
-      existsOrError(user, 'Usuário não encontrado.')
+      if (req.userId != req.params.user_id)
+        return res
+          .status(403)
+          .json({ error: 'Não é possível alterar o perfil de outro usuário.' })
+
+      user.name = name || user.name
+      user.url_Avatar = firebaseUrl || user.url_Avatar
+      user.profession = profession || user.profession
+      user.bio = bio || user.bio
+
+      await knex('users').update(user).where({ id: req.userId })
+
+      res.status(204).send()
+    } catch (error) {
+      next(error)
     }
-
-    user.name = name
-    user.email = email
-    user.url_Avatar = firebaseUrl
-    user.profession = profession
-    user.bio = bio
-
-    knex('users')
-      .update(user)
-      .where({ id: req.userId })
-      .then((_) => res.status(204).send())
-      .catch((err) => res.status(500).send(err))
   }
 }
 
