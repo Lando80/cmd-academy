@@ -71,7 +71,7 @@ class UserController {
     knex('users')
       .update(user)
       .where({ id: req.userId })
-      .then((_) => res.status(200).send(user))
+      .then((_) => res.status(204).send())
       .catch((err) => res.status(500).send(err))
   }
 }
