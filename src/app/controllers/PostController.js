@@ -5,6 +5,8 @@ class PostController {
   // TODO: FUNCAO DE UPAR A IMAGEM NO FIREBASE E PEGAR A URL
   async save(req, res) {
     try {
+      const { firebaseUrl } = req.file ? req.file : ''
+
       const { title, content, tags } = req.body
       const author_id = req.userId
 
@@ -15,12 +17,13 @@ class PostController {
         title,
         content,
         tags,
+        url_image: firebaseUrl,
         author_id,
       }
 
       await knex('posts').insert(post)
 
-      return res.status(201).json(post)
+      return res.status(201).send(post)
     } catch (msg) {
       return res.status(400).send(msg)
     }
