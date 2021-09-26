@@ -1,16 +1,25 @@
 import knex from '../../database/connection'
+import { existsOrError } from '../utils/validations'
 
 class PostController {
   async save(req, res, next) {
     try {
-      const { firebaseUrl } = req.file ? req.file : ''
-      const { title, content, tags } = req.body
       const author_id = req.userId
 
-      if (!title || !content)
-        return res
-          .status(400)
-          .json({ error: 'Title and content are required.' })
+      const { firebaseUrl } = req.file ? req.file : ''
+      const { title, content } = req.body
+      let tags = req.body.tags
+
+      existsOrError(title, 'Post title is required.')
+      existsOrError(content, 'Post content is required.')
+      existsOrError(tags, 'Post tags are required.')
+
+      const formattedTags = tags.replace(/\ /g, '').split(',') //remove os espacos e as virgulas
+
+      if (formattedTags.length > 3)
+        return res.status(400).json({ error: 'Tags limit is 3.' })
+
+      tags = String(formattedTags)
 
       const post = {
         title,
@@ -31,7 +40,9 @@ class PostController {
   // TODO: ADICIONAR LIMITES DE POSTS RETORNADOS
   async index(req, res, next) {
     try {
-      const posts = await knex('posts').select('*')
+      const posts = await knex('posts')
+        .join('users', 'users.id', '=', 'posts.author_id')
+        .select('posts.*', 'users.name AS author_name')
 
       if (posts.length === 0)
         return res.status(404).json({ error: 'No search results.' })
@@ -78,16 +89,26 @@ class PostController {
 
   async update(req, res, next) {
     try {
-      const { title, content, tags } = req.body
-
-      const post_id = req.params.post_id
-      const user_id = req.userId
-
       const post = await knex('posts')
         .where({ id: post_id, author_id: user_id })
         .first()
 
       if (!post) return res.status(404).json({ error: 'Post not found.' })
+
+      const { title, content } = req.body
+
+      const post_id = req.params.post_id
+      const user_id = req.userId
+      let tags = req.body.tags
+
+      existsOrError(tags, 'Post tags are required.')
+
+      const formattedTags = tags.replace(/\ /g, '').split(',') //remove os espacos e as virgulas
+
+      if (formattedTags.length > 3)
+        return res.status(400).json({ error: 'Tags limit is 3.' })
+
+      tags = String(formattedTags)
 
       post.title = title || post.title
       post.content = content || post.content
