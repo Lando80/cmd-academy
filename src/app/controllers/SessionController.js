@@ -4,27 +4,26 @@ import { existsOrError } from '../utils/validations.js'
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 
-dotenv.config() //Carregar configurações como "JWT_SECRET" e "JWT_EXPIRATION" do arquivo dotenv pra serem usadas no codigo 
+dotenv.config() //Carregar configurações como "JWT_SECRET" e "JWT_EXPIRATION" do arquivo dotenv pra serem usadas no codigo
 
 class SessionController {
- 
-  async signin(req, res) {
-    
-    const user = {...req.body}
+  async signin(req, res, next) {
+    const user = { ...req.body }
 
     try {
       //Verifica se atributos são nulos
-      existsOrError(user.email, 'E-mail não informado') 
+      existsOrError(user.email, 'E-mail não informado')
       existsOrError(user.password, 'Senha não informada')
 
       //Pega informações no banco a partir do email recebido
       const userFromDB = await knex
         .select('*')
         .from('users')
-        .where({ email: user.email }).first()
+        .where({ email: user.email })
+        .first()
 
       //Verifica se existe usuario para o email
-      existsOrError(userFromDB, 'Usuario não cadastrado')
+      existsOrError(userFromDB, 'Usuário não cadastrado')
 
       //Compara a senha recebida com a senha do banco
       if (!(await bcrypt.compare(user.password, userFromDB.password))) {
@@ -34,25 +33,22 @@ class SessionController {
       //Chegando aqui as credenciais ja foram validadas e são retornadas informações do usuario além do token jwt para sessão
       return res.status(200).send({
         user: {
-          id         : userFromDB.id,
-          name       : userFromDB.name,
-          email      : userFromDB.email,
-          bio        : userFromDB.bio,
-          avatar     : userFromDB.url_Avatar,
-          isAdmin    : userFromDB.isAdmin,
-          profession : userFromDB.profession,
+          id: userFromDB.id,
+          name: userFromDB.name,
+          email: userFromDB.email,
+          bio: userFromDB.bio,
+          avatar: userFromDB.url_Avatar,
+          isAdmin: userFromDB.isAdmin,
+          profession: userFromDB.profession,
         },
-        token: jwt.sign({id : userFromDB.id}, process.env.JWT_SECRET, {
+        token: jwt.sign({ id: userFromDB.id }, process.env.JWT_SECRET, {
           expiresIn: process.env.JWT_EXPIRATION,
         }),
       })
-
-
-      } catch(msg) {
-        return res.status(400).send(msg)
-      }
-
+    } catch (error) {
+      next(error)
     }
+  }
 }
 
 export default new SessionController()
