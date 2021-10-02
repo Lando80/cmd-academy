@@ -11,5 +11,7 @@ routes.post('/signin', SessionController.signin)
 routes.use(AuthMiddleware)
 
 routes.put('/users', UserController.update)
+routes.post('/GetAll', UserController.all)
+routes.post('/GetId', UserController.one)
 
 export default routes

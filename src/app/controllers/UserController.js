@@ -68,6 +68,49 @@ class UserController {
     .then(_ => res.status(204).send())
     .catch(err => res.status(500).send(err))
   }
+
+  async all(req, res) {
+
+    try {
+      
+      //Pega informações(exceto a senha) de todos usuarios no banco 
+      const userFromDB = await knex
+        .select('id', 'name', 'email', 'bio', 'url_Avatar', 'isAdmin', 'profession')
+        .from('users')
+
+      //Retorna todas as informações
+      return res.status(200).send(userFromDB)
+
+
+      } catch(msg) {
+        return res.status(400).send(msg)
+      }
+  }
+
+  async one(req, res) {
+
+    try {
+      
+      //Pega informções enviadas no post
+      const user = {...req.body}
+
+      //Verifica se o id foi informado
+      existsOrError(user.id, 'Id não informado')
+
+      //Pega informações(exceto a senha) do usuario no banco de acordo com o id recebido 
+      const userFromDB = await knex
+        .select('id', 'name', 'email', 'bio', 'url_Avatar', 'isAdmin', 'profession')
+        .from('users')
+        .where({ id: user.id }).first()
+
+      //Retorna as informações
+      return res.status(200).send(userFromDB)
+
+
+      } catch(msg) {
+        return res.status(400).send(msg)
+      }
+  }
 }
   
 export default new UserController()
