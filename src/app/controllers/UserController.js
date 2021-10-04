@@ -69,47 +69,47 @@ class UserController {
     .catch(err => res.status(500).send(err))
   }
 
-  async all(req, res) {
+  async get(req, res) {
 
     try {
-      
-      //Pega informações(exceto a senha) de todos usuarios no banco 
+
       const userFromDB = await knex
-        .select('id', 'name', 'email', 'bio', 'url_Avatar', 'isAdmin', 'profession')
+        .select('id', 'name', 'email', 'url_Avatar', 'isAdmin', 'profession', 'bio')
         .from('users')
 
-      //Retorna todas as informações
-      return res.status(200).send(userFromDB)
-
-
-      } catch(msg) {
+        return res.status(200).send(userFromDB)
+    } catch(msg) {
         return res.status(400).send(msg)
-      }
+    }
   }
 
-  async one(req, res) {
+  async getById(req, res) {
 
     try {
-      
-      //Pega informções enviadas no post
-      const user = {...req.body}
-
-      //Verifica se o id foi informado
-      existsOrError(user.id, 'Id não informado')
-
-      //Pega informações(exceto a senha) do usuario no banco de acordo com o id recebido 
       const userFromDB = await knex
-        .select('id', 'name', 'email', 'bio', 'url_Avatar', 'isAdmin', 'profession')
+        .select('id', 'name', 'email', 'url_Avatar', 'isAdmin', 'profession', 'bio')
         .from('users')
-        .where({ id: user.id }).first()
+        .where({id: req.params.id})
+        .first()
 
-      //Retorna as informações
+        return res.status(200).send(userFromDB)
+
+    } catch(msg) {
+      return res.status(400).send(msg)
+    }
+  }
+
+  async countUsers(req, res) {
+    try {
+      const userFromDB = await knex
+        .count('id')
+        .from('users')
+        .first()
+
       return res.status(200).send(userFromDB)
-
-
-      } catch(msg) {
-        return res.status(400).send(msg)
-      }
+    } catch(msg) {
+      return res.status(400).send(msg)
+    }
   }
 }
   
