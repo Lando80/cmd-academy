@@ -31,14 +31,13 @@ class SessionController {
       }
 
       //Chegando aqui as credenciais ja foram validadas e são retornadas informações do usuario além do token jwt para sessão
-      return res.status(200).send({
+      return res.status(200).json({
         user: {
           id: userFromDB.id,
           name: userFromDB.name,
           email: userFromDB.email,
           bio: userFromDB.bio,
           avatar: userFromDB.url_Avatar,
-          isAdmin: userFromDB.isAdmin,
           profession: userFromDB.profession,
         },
         token: jwt.sign({ id: userFromDB.id }, process.env.JWT_SECRET, {

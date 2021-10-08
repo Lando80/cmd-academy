@@ -34,6 +34,8 @@ class UserController {
       user.password = hashedPassword(user.password)
       delete user.confirmPassword
 
+      await knex('users').insert(user)
+
       delete user.password
 
       return res
