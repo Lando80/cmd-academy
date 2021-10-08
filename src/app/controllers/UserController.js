@@ -68,6 +68,49 @@ class UserController {
     .then(_ => res.status(204).send())
     .catch(err => res.status(500).send(err))
   }
+
+  async get(req, res) {
+
+    try {
+
+      const userFromDB = await knex
+        .select('id', 'name', 'email', 'url_Avatar', 'isAdmin', 'profession', 'bio')
+        .from('users')
+
+        return res.status(200).send(userFromDB)
+    } catch(msg) {
+        return res.status(400).send(msg)
+    }
+  }
+
+  async getById(req, res) {
+
+    try {
+      const userFromDB = await knex
+        .select('id', 'name', 'email', 'url_Avatar', 'isAdmin', 'profession', 'bio')
+        .from('users')
+        .where({id: req.params.id})
+        .first()
+
+        return res.status(200).send(userFromDB)
+
+    } catch(msg) {
+      return res.status(400).send(msg)
+    }
+  }
+
+  async countUsers(req, res) {
+    try {
+      const userFromDB = await knex
+        .count('id')
+        .from('users')
+        .first()
+
+      return res.status(200).send(userFromDB)
+    } catch(msg) {
+      return res.status(400).send(msg)
+    }
+  }
 }
   
 export default new UserController()
