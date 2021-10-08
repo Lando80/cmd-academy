@@ -8,23 +8,10 @@ class PostController {
 
       const { firebaseUrl } = req.file ? req.file : ''
       const { title, content } = req.body
-      let tags = req.body.tags
-
-      existsOrError(title, 'Post title is required.')
-      existsOrError(content, 'Post content is required.')
-      existsOrError(tags, 'Post tags are required.')
-
-      const formattedTags = tags.replace(/\ /g, '').split(',') //remove os espacos e as virgulas
-
-      if (formattedTags.length > 3)
-        return res.status(400).json({ error: 'Tags limit is 3.' })
-
-      tags = String(formattedTags)
 
       const post = {
         title,
         content,
-        tags,
         url_image: firebaseUrl,
         author_id,
       }
@@ -37,21 +24,25 @@ class PostController {
     }
   }
 
-  // TODO: ADICIONAR LIMITES DE POSTS RETORNADOS
+  // TODO: ADICIONAR PAGINAÇÃO DE POSTS
   async index(req, res, next) {
     try {
       const posts = await knex('posts')
         .join('users', 'users.id', '=', 'posts.author_id')
-        .select('posts.*', 'users.name AS author_name')
+        .select(
+          'posts.*',
+          'users.name AS author_name',
+          'users.url_Avatar AS author_avatar'
+        )
 
       if (posts.length === 0)
-        return res.status(404).json({ error: 'No search results.' })
+        return res.status(404).json({ error: 'No posts yet.' })
 
       return res.status(200).json(posts)
     } catch (error) {
       next(error)
     }
-  } // return all posts if a search string is not provided
+  } // return all posts
 
   async indexAll(req, res, next) {
     try {
