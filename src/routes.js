@@ -14,6 +14,8 @@ const routes = express.Router()
 routes.post('/users', UserController.save)
 routes.post('/auth', SessionController.signin)
 
+routes.get('/users/count', UserController.countUsers)
+
 // Authentication middleware
 routes.use(AuthMiddleware)
 

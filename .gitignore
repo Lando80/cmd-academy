@@ -9,7 +9,11 @@ lerna-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+<<<<<<< HEAD
 # Firebase Key
+=======
+# Firebase configuration
+>>>>>>> login-cadastro
 firebaseKey.json
 
 # Runtime data

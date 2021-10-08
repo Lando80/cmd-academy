@@ -68,7 +68,17 @@ class UserController {
 
       await knex('users').update(user).where({ id: req.userId })
 
-      res.status(204).send()
+      res.status(204)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async countUsers(req, res, next) {
+    try {
+      const usersFromDB = await knex.count('id').from('users').first()
+
+      return res.status(200).json(usersFromDB)
     } catch (error) {
       next(error)
     }
