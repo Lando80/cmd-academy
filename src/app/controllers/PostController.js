@@ -30,8 +30,8 @@ class PostController {
         .join('tb_users', 'tb_users.id', '=', 'tb_posts.author_id')
         .select(
           'tb_posts.*',
-          'users.name AS author_name',
-          'users.url_Avatar AS author_avatar'
+          'tb_users.name AS author_name',
+          'tb_users.url_avatar AS author_avatar'
         )
         .orderBy('id', 'desc')
 
