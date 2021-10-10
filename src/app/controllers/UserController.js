@@ -23,7 +23,7 @@ class UserController {
       existsOrError(user.confirmPassword, 'Confirmação de Senha Inválida')
       equalsOrError(user.password, user.confirmPassword, 'Senhas não conferem')
 
-      const userFromDB = await knex('users')
+      const userFromDB = await knex('tb_users')
         .where({ email: user.email })
         .first()
 
@@ -34,7 +34,7 @@ class UserController {
       user.password = hashedPassword(user.password)
       delete user.confirmPassword
 
-      await knex('users').insert(user)
+      await knex('tb_users').insert(user)
 
       delete user.password
 
@@ -52,7 +52,9 @@ class UserController {
 
       const { firebaseUrl } = req.file ? req.file : ''
 
-      const user = await knex('users').where({ id: req.params.user_id }).first()
+      const user = await knex('tb_users')
+        .where({ id: req.params.user_id })
+        .first()
 
       if (!user) return res.status(404).json({ error: 'User not found.' })
 
@@ -66,7 +68,7 @@ class UserController {
       user.profession = profession || user.profession
       user.bio = bio || user.bio
 
-      await knex('users').update(user).where({ id: req.userId })
+      await knex('tb_users').update(user).where({ id: req.userId })
 
       res.status(204)
     } catch (error) {
@@ -76,7 +78,7 @@ class UserController {
 
   async countUsers(req, res, next) {
     try {
-      const usersFromDB = await knex.count('id').from('users').first()
+      const usersFromDB = await knex.count('id').from('tb_users').first()
 
       return res.status(200).json(usersFromDB)
     } catch (error) {

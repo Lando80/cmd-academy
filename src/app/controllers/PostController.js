@@ -16,24 +16,24 @@ class PostController {
         author_id,
       }
 
-      await knex('posts').insert(post)
+      await knex('tb_posts').insert(post)
 
       return res.status(201).json(post)
     } catch (error) {
       next(error)
     }
   }
-
   // TODO: ADICIONAR PAGINAÇÃO DE POSTS
   async index(req, res, next) {
     try {
-      const posts = await knex('posts')
-        .join('users', 'users.id', '=', 'posts.author_id')
+      const posts = await knex('tb_posts')
+        .join('tb_users', 'tb_users.id', '=', 'tb_posts.author_id')
         .select(
-          'posts.*',
+          'tb_posts.*',
           'users.name AS author_name',
           'users.url_Avatar AS author_avatar'
         )
+        .orderBy('id', 'desc')
 
       if (posts.length === 0)
         return res.status(404).json({ error: 'No posts yet.' })
@@ -48,10 +48,10 @@ class PostController {
     try {
       const { user_id } = req.params
 
-      if (!(await knex('users').where({ id: user_id }).first()))
+      if (!(await knex('tb_users').where({ id: user_id }).first()))
         return res.status(400).json({ error: 'User not exists.' })
 
-      const posts = await knex('posts')
+      const posts = await knex('tb_posts')
         .select('*')
         .where({ author_id: user_id })
 
@@ -68,7 +68,7 @@ class PostController {
     try {
       const post_id = req.params.post_id
 
-      const post = await knex('posts').where({ id: post_id }).first()
+      const post = await knex('tb_posts').where({ id: post_id }).first()
 
       if (!post) return res.send({ error: 'Post not found.' })
 
@@ -80,7 +80,7 @@ class PostController {
 
   async update(req, res, next) {
     try {
-      const post = await knex('posts')
+      const post = await knex('tb_posts')
         .where({ id: post_id, author_id: user_id })
         .first()
 
@@ -105,7 +105,7 @@ class PostController {
       post.content = content || post.content
       post.tags = tags || post.tags
 
-      await knex('posts').update(post).where({ id: post.id })
+      await knex('tb_posts').update(post).where({ id: post.id })
 
       return res.status(204).send()
     } catch (error) {
@@ -118,7 +118,7 @@ class PostController {
       const post_id = req.params.post_id
       const user_id = req.userId
 
-      const result = await knex('posts')
+      const result = await knex('tb_posts')
         .where({ id: post_id, author_id: user_id })
         .del()
 

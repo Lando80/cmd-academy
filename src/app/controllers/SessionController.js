@@ -18,7 +18,7 @@ class SessionController {
       //Pega informações no banco a partir do email recebido
       const userFromDB = await knex
         .select('*')
-        .from('users')
+        .from('tb_users')
         .where({ email: user.email })
         .first()
 
