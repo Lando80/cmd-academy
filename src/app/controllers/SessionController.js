@@ -7,7 +7,7 @@ import dotenv from 'dotenv'
 dotenv.config() //Carregar configurações como "JWT_SECRET" e "JWT_EXPIRATION" do arquivo dotenv pra serem usadas no codigo
 
 class SessionController {
-  async signin(req, res, next) {
+  async auth(req, res, next) {
     const user = { ...req.body }
 
     try {
