@@ -1,5 +1,4 @@
 import knex from '../../database/connection'
-import { existsOrError } from '../utils/validations'
 
 class PostController {
   async save(req, res, next) {
@@ -64,13 +63,16 @@ class PostController {
     }
   } // return all posts of an user
 
-  async show(req, res, next) {
+  async getById(req, res, next) {
     try {
-      const post_id = req.params.post_id
+      const postId = req.params.post_id
 
-      const post = await knex('tb_posts').where({ id: post_id }).first()
+      if (!Number(postId) || !postId)
+        return res.status(400).json({ error: 'Informe um id númerico.' })
 
-      if (!post) return res.send({ error: 'Post not found.' })
+      const post = await knex('tb_posts').where({ id: postId }).first()
+
+      if (!post) return res.status(404).json({ error: 'Post not found.' })
 
       return res.json(post)
     } catch (error) {
@@ -80,34 +82,23 @@ class PostController {
 
   async update(req, res, next) {
     try {
+      const { title, content } = req.body
+
+      const post_id = req.params.post_id
+      const user_id = req.userId
+
       const post = await knex('tb_posts')
         .where({ id: post_id, author_id: user_id })
         .first()
 
       if (!post) return res.status(404).json({ error: 'Post not found.' })
 
-      const { title, content } = req.body
-
-      const post_id = req.params.post_id
-      const user_id = req.userId
-      let tags = req.body.tags
-
-      existsOrError(tags, 'Post tags are required.')
-
-      const formattedTags = tags.replace(/\ /g, '').split(',') //remove os espacos e as virgulas
-
-      if (formattedTags.length > 3)
-        return res.status(400).json({ error: 'Tags limit is 3.' })
-
-      tags = String(formattedTags)
-
       post.title = title || post.title
       post.content = content || post.content
-      post.tags = tags || post.tags
 
       await knex('tb_posts').update(post).where({ id: post.id })
 
-      return res.status(204).send()
+      return res.status(204)
     } catch (error) {
       next(error)
     }
@@ -125,11 +116,10 @@ class PostController {
       if (result === 0)
         return res.status(404).json({ error: 'Post not found.' })
 
-      return res.status(204).send()
+      return res.status(204)
     } catch (error) {
       next(error)
     }
   }
 }
-
 export default new PostController()
