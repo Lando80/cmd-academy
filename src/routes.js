@@ -12,7 +12,7 @@ import multerConfig from './config/multer'
 const routes = express.Router()
 
 routes.post('/users', UserController.save)
-routes.post('/auth', SessionController.signin)
+routes.post('/auth', SessionController.auth)
 
 routes.get('/users/count', UserController.countUsers)
 
@@ -26,6 +26,9 @@ routes.put(
   UserController.update
 )
 
+routes.get('/users', UserController.index)
+routes.get('/users/:user_id', UserController.getById)
+
 // Posts routes
 routes.post(
   '/posts',
@@ -36,7 +39,7 @@ routes.post(
 routes.put('/posts/:post_id', PostController.update)
 routes.delete('/posts/:post_id', PostController.delete)
 
-routes.get('/posts/:post_id', PostController.show)
+routes.get('/posts/:post_id', PostController.getById)
 routes.get('/:user_id/posts', PostController.indexAll)
 routes.get('/feed', PostController.index)
 
