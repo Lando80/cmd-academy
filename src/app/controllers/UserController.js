@@ -76,6 +76,52 @@ class UserController {
     }
   }
 
+  async index(req, res, next) {
+    try {
+      const usersFromDB = await knex('tb_users').select(
+        'id',
+        'name',
+        'email',
+        'type',
+        'profession',
+        'bio',
+        'url_avatar'
+      )
+
+      return res.status(200).json(usersFromDB)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  async getById(req, res, next) {
+    try {
+      const userId = req.params.user_id
+
+      if (!Number(userId) || !userId)
+        return res.status(400).json({ error: 'Informe um id númerico.' })
+
+      const userFromDB = await knex('tb_users')
+        .select(
+          'id',
+          'name',
+          'email',
+          'type',
+          'profession',
+          'bio',
+          'url_avatar'
+        )
+        .where({ id: userId })
+        .first()
+
+      if (!userFromDB) return res.status(404).json({ error: 'User not found.' })
+
+      return res.json(userFromDB)
+    } catch (error) {
+      next(error)
+    }
+  }
+
   async countUsers(req, res, next) {
     try {
       const usersFromDB = await knex.count('id').from('tb_users').first()
