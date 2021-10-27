@@ -5,7 +5,7 @@ dotenv.config() // carrega as variaveis de ambiente da .env
 
 module.exports = {
   async up(knex = Knex) {
-    return knex.schema.createTable('users', (table) => {
+    return knex.schema.createTable('tb_users', (table) => {
       table.increments('id', 16).primary()
       table.string('name').notNull()
       table.string('email').notNull().unique()
@@ -21,6 +21,6 @@ module.exports = {
   },
 
   async down(knex = Knex) {
-    return knex.schema.dropTable('users')
-  },
+    return knex.schema.dropTable('tb_users')
+  }
 }
