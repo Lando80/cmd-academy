@@ -1,18 +1,5 @@
 # CMD Academy
 
-## Equipes:
-
-| MÓDULO                 | FRONT-END                       | BACK-END                    |
-| ---------------------- | ------------------------------- | --------------------------- |
-| Login/Cadastro         | Marcionílio / Lucas             | Daniel / Rodrigo / David    |
-| Home                   | Alexandre / Jailma              | Aytalon / Matheus / Rickson |
-| Notificações           | Acácio / Antonio                | Orlando / Ronildo           |
-| Certificados           | David / Marcos                  | Orlando / Ronildo           |
-| Perfil Instrutor/Aluno | Edicléia / Ailton               | Edicléia / Daniel           |
-| Agenda                 | Lucas / Alexandre / Marcionílio | Rodrigo / João Ricardo      |
-
----
-
 ## Ferramentas necessárias 🔧
 
 - [Git](https://git-scm.com/downloads)
@@ -39,7 +26,24 @@ Lembre-se de verificar em qual branch você está fazendo isso
 
 ---
 
-### 2. Crie seu banco de dados local
+### 2. Baixe o arquivo `firebaseKey.json`
+
+Abra o card de 🔗 Links clicando [aqui](https://trello.com/c/ymqOXQ11)
+
+Baixe o arquivo `firebaseKey.json`
+
+Mova o arquivo para dentro da pasta `config`, deixando assim
+
+    📁src
+     |-- 📁config
+       |-- cors.json
+       |-- database.js
+       |-- firebaseKey.json
+       |-- multer.js
+
+---
+
+### 3. Crie seu banco de dados local
 
 Rode o seguinte comando pelo terminal
 
@@ -65,11 +69,14 @@ Após se conectar com o banco você poderá listar as tabelas existentes por mei
 
 ---
 
-### 3. Copie e cole o arquivo _.env.exemple_ e altere o nome da cópia para _.env_
+### 4. Copie e cole o arquivo _`.env.exemple`_ e altere o nome da cópia para _`.env`_
+
+⚠ É extramente necessário que você faça esse passo
+corretamente ⚠
 
 ---
 
-### 4. Configure seu arquivo _.env_ adicionando os seguintes itens
+### 5. Configure seu arquivo _`.env`_ adicionando os seguintes itens
 
     HOST_DB = localhost
 
@@ -81,7 +88,9 @@ Após se conectar com o banco você poderá listar as tabelas existentes por mei
 
     DATABASE_NAME = cmd
 
-### 5. Abra a pasta do projeto pelo seu editor de código ou pelo terminal
+---
+
+### 6. Abra a pasta do projeto pelo seu editor de código ou pelo terminal
 
 Caso esteja utilizando o Visual Studio Code, aperte
 
@@ -98,3 +107,11 @@ Após a instalação das dependências você deverá rodar o comando
 E por último rodar o comando
 
     npm run dev
+
+---
+
+Se chegou até aqui o seu projeto deve estar configurado corretamente, então, `parabéns` 😎👍
+
+Agora basta fazer requisições para a API utilizando o [Insomnia](https://insomnia.rest/download) ou o [Postman](https://www.postman.com/downloads/)
+
+As rotas estão no arquivo `routes`, beleza?
