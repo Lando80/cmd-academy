@@ -27,7 +27,7 @@ class SessionController {
 
       //Compara a senha recebida com a senha do banco
       if (!(await bcrypt.compare(user.password, userFromDB.password))) {
-        return res.status(401).send('Senha não confere')
+        return res.status(401).json({ error: 'Senha não confere' })
       }
 
       //Chegando aqui as credenciais ja foram validadas e são retornadas informações do usuario além do token jwt para sessão
@@ -37,8 +37,9 @@ class SessionController {
           name: userFromDB.name,
           email: userFromDB.email,
           bio: userFromDB.bio,
-          avatar: userFromDB.url_Avatar,
+          type: userFromDB.type,
           profession: userFromDB.profession,
+          avatar: userFromDB.url_avatar,
         },
         token: jwt.sign({ id: userFromDB.id }, process.env.JWT_SECRET, {
           expiresIn: process.env.JWT_EXPIRATION,
